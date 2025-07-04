@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace Tesisatci.Dtos
 {
@@ -6,14 +7,14 @@ namespace Tesisatci.Dtos
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public IFormFile Image { get; set; }
+        public List<IFormFile> Images { get; set; } // ⭐️ çoklu dosya
     }
     public class DeliveredWorkUpdateDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public IFormFile Image { get; set; } // Opsiyonel: yeni resim yükleme
+        public List<IFormFile> Images { get; set; } // ⭐️ çoklu dosya, opsiyonel
     }
 
 

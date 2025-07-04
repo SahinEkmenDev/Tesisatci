@@ -4,6 +4,7 @@ using Tesisatci.Data;
 using Tesisatci.Dtos;
 using Tesisatci.Models;
 using Tesisatci.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace Tesisatci.Controllers
 {
@@ -24,28 +25,40 @@ namespace Tesisatci.Controllers
         public async Task<ActionResult<IEnumerable<ServiceDto>>> GetServices()
         {
             return await _context.Services
+                .Include(s => s.Images)
                 .Select(s => new ServiceDto
                 {
                     Id = s.Id,
                     Title = s.Title,
                     Description = s.Description,
-                    ImageUrl = s.ImageUrl
-                }).ToListAsync();
+                    ImageUrls = s.Images.Select(i => i.Url).ToList()
+                })
+                .ToListAsync();
         }
 
         [HttpPost]
         public async Task<ActionResult<ServiceDto>> CreateService([FromForm] ServiceCreateDto dto)
         {
-            var result = await _photoService.AddPhotoAsync(dto.Image);
-            if (result.Error != null)
-                return BadRequest(result.Error.Message);
+            if (dto.Images == null || !dto.Images.Any())
+                return BadRequest("En az bir fotoğraf yükleyin.");
 
             var service = new Service
             {
                 Title = dto.Title,
-                Description = dto.Description,
-                ImageUrl = result.SecureUrl.ToString()
+                Description = dto.Description
             };
+
+            foreach (var image in dto.Images)
+            {
+                var result = await _photoService.AddPhotoAsync(image);
+                if (result.Error != null)
+                    return BadRequest(result.Error.Message);
+
+                service.Images.Add(new ServiceImage
+                {
+                    Url = result.SecureUrl.ToString()
+                });
+            }
 
             _context.Services.Add(service);
             await _context.SaveChangesAsync();
@@ -55,7 +68,7 @@ namespace Tesisatci.Controllers
                 Id = service.Id,
                 Title = service.Title,
                 Description = service.Description,
-                ImageUrl = service.ImageUrl
+                ImageUrls = service.Images.Select(i => i.Url).ToList()
             });
         }
 

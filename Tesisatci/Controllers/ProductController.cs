@@ -26,9 +26,7 @@ namespace Tesisatci.Controllers
         {
             return await _context.Products
                 .Include(p => p.Category)
-                
-                .Include(p => p.Images)
-                .ToListAsync();
+                .ToListAsync(); // Images include kaldırıldı
         }
 
         // GET: api/product/{id}
@@ -37,9 +35,7 @@ namespace Tesisatci.Controllers
         {
             var product = await _context.Products
                 .Include(p => p.Category)
-                
-                .Include(p => p.Images)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.Id == id); // Images include kaldırıldı
 
             if (product == null)
                 return NotFound();
@@ -57,13 +53,14 @@ namespace Tesisatci.Controllers
             var product = new Product
             {
                 Name = dto.Name,
+                Description = dto.Description,
                 Unit = dto.Unit,
                 Price = dto.Price,
                 CostPrice = dto.CostPrice,
                 Stock = dto.Stock,
                 CriticalStock = dto.CriticalStock,
                 CategoryId = dto.CategoryId,
-               
+                ImageUrl = result.SecureUrl.ToString(), // ⭐️ EKLENDİ
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -71,16 +68,11 @@ namespace Tesisatci.Controllers
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            var image = new ProductImage
-            {
-                ProductId = product.Id,
-                Url = result.SecureUrl.ToString()
-            };
-            _context.ProductImages.Add(image);
-            await _context.SaveChangesAsync();
-
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
+
+
+
 
 
         // PUT: api/product/{id}

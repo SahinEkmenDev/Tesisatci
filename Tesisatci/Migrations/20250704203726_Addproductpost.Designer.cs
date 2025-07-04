@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Tesisatci.Data;
@@ -11,9 +12,11 @@ using Tesisatci.Data;
 namespace Tesisatci.Migrations
 {
     [DbContext(typeof(TesisatciDbContext))]
-    partial class TesisatciDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250704203726_Addproductpost")]
+    partial class Addproductpost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

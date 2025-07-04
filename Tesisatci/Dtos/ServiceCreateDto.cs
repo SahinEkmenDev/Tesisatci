@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace Tesisatci.Dtos
 {
@@ -6,6 +7,6 @@ namespace Tesisatci.Dtos
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public IFormFile Image { get; set; }
+        public List<IFormFile> Images { get; set; }
     }
 }

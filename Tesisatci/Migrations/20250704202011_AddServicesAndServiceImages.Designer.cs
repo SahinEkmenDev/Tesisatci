@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Tesisatci.Data;
@@ -11,9 +12,11 @@ using Tesisatci.Data;
 namespace Tesisatci.Migrations
 {
     [DbContext(typeof(TesisatciDbContext))]
-    partial class TesisatciDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250704202011_AddServicesAndServiceImages")]
+    partial class AddServicesAndServiceImages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,10 +114,6 @@ namespace Tesisatci.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -286,7 +285,7 @@ namespace Tesisatci.Migrations
             modelBuilder.Entity("Tesisatci.Models.ProductImage", b =>
                 {
                     b.HasOne("Tesisatci.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -317,6 +316,11 @@ namespace Tesisatci.Migrations
                 });
 
             modelBuilder.Entity("Tesisatci.Models.DeliveredWork", b =>
+                {
+                    b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("Tesisatci.Models.Product", b =>
                 {
                     b.Navigation("Images");
                 });

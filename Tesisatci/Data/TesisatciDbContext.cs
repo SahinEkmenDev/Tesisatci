@@ -17,6 +17,11 @@ namespace Tesisatci.Data
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<DeliveredWork> DeliveredWorks { get; set; }
         public DbSet<Service> Services { get; set; }
+        public DbSet<DeliveredWorkImage> DeliveredWorkImages { get; set; }
+        
+        public DbSet<ServiceImage> ServiceImages { get; set; }
+
+
 
 
     }

@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string ImageUrl { get; set; } // Cloudinary URL
+        public List<DeliveredWorkImage> Images { get; set; } = new List<DeliveredWorkImage>();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

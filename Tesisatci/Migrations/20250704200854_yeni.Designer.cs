@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Tesisatci.Data;
@@ -11,9 +12,11 @@ using Tesisatci.Data;
 namespace Tesisatci.Migrations
 {
     [DbContext(typeof(TesisatciDbContext))]
-    partial class TesisatciDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250704200854_yeni")]
+    partial class yeni
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,10 +114,6 @@ namespace Tesisatci.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -221,6 +220,10 @@ namespace Tesisatci.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
@@ -228,28 +231,6 @@ namespace Tesisatci.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("Tesisatci.Models.ServiceImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ServiceImages");
                 });
 
             modelBuilder.Entity("Tesisatci.Models.Category", b =>
@@ -286,7 +267,7 @@ namespace Tesisatci.Migrations
             modelBuilder.Entity("Tesisatci.Models.ProductImage", b =>
                 {
                     b.HasOne("Tesisatci.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -305,23 +286,12 @@ namespace Tesisatci.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Tesisatci.Models.ServiceImage", b =>
-                {
-                    b.HasOne("Tesisatci.Models.Service", "Service")
-                        .WithMany("Images")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
-                });
-
             modelBuilder.Entity("Tesisatci.Models.DeliveredWork", b =>
                 {
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("Tesisatci.Models.Service", b =>
+            modelBuilder.Entity("Tesisatci.Models.Product", b =>
                 {
                     b.Navigation("Images");
                 });

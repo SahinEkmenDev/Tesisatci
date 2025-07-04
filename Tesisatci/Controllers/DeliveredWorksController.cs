@@ -40,52 +40,70 @@ namespace Tesisatci.Controllers
         [HttpPost]
         public async Task<ActionResult<DeliveredWork>> CreateDeliveredWork([FromForm] DeliveredWorkDto dto)
         {
-            var result = await _photoService.AddPhotoAsync(dto.Image);
-            if (result.Error != null)
-                return BadRequest(result.Error.Message);
-
             var work = new DeliveredWork
             {
                 Title = dto.Title,
-                Description = dto.Description,
-                ImageUrl = result.SecureUrl.ToString()
+                Description = dto.Description
             };
+
+            if (dto.Images != null && dto.Images.Count > 0)
+            {
+                foreach (var image in dto.Images)
+                {
+                    var result = await _photoService.AddPhotoAsync(image);
+                    if (result.Error != null)
+                        return BadRequest(result.Error.Message);
+
+                    work.Images.Add(new DeliveredWorkImage
+                    {
+                        Url = result.SecureUrl.ToString()
+                    });
+                }
+            }
 
             _context.DeliveredWorks.Add(work);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetDeliveredWork), new { id = work.Id }, work);
         }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDeliveredWork(int id, [FromForm] DeliveredWorkUpdateDto dto)
         {
             if (id != dto.Id)
                 return BadRequest();
 
-            var work = await _context.DeliveredWorks.FindAsync(id);
+            var work = await _context.DeliveredWorks
+                .Include(w => w.Images)
+                .FirstOrDefaultAsync(w => w.Id == id);
+
             if (work == null)
                 return NotFound();
 
-            // Title update
             if (!string.IsNullOrEmpty(dto.Title))
                 work.Title = dto.Title;
 
-            // Description update
             if (!string.IsNullOrEmpty(dto.Description))
                 work.Description = dto.Description;
 
-            // Image update (varsa Cloudinary'e yükle)
-            if (dto.Image != null)
+            if (dto.Images != null && dto.Images.Count > 0)
             {
-                var result = await _photoService.AddPhotoAsync(dto.Image);
-                if (result.Error != null)
-                    return BadRequest(result.Error.Message);
+                foreach (var image in dto.Images)
+                {
+                    var result = await _photoService.AddPhotoAsync(image);
+                    if (result.Error != null)
+                        return BadRequest(result.Error.Message);
 
-                work.ImageUrl = result.SecureUrl.ToString();
+                    work.Images.Add(new DeliveredWorkImage
+                    {
+                        Url = result.SecureUrl.ToString()
+                    });
+                }
             }
 
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
 
 
 

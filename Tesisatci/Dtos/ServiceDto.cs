@@ -5,6 +5,6 @@
         public int Id { get; set; }           // ⭐️ EKLE
         public string Title { get; set; }     // ⭐️ EKLE
         public string Description { get; set; } // ⭐️ EKLE
-        public string ImageUrl { get; set; }
+        public List<string> ImageUrls { get; set; }
     }
 }
