@@ -1,0 +1,6 @@
+@Tesisatci_HostAddress = http://localhost:5135
+
+GET {{Tesisatci_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
