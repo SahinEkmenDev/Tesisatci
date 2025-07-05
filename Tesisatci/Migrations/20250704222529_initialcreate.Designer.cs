@@ -12,8 +12,8 @@ using Tesisatci.Data;
 namespace Tesisatci.Migrations
 {
     [DbContext(typeof(TesisatciDbContext))]
-    [Migration("20250704203726_Addproductpost")]
-    partial class Addproductpost
+    [Migration("20250704222529_initialcreate")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

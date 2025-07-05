@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tesisatci.Data;
+using Tesisatci.Dtos;
 using Tesisatci.Models;
 
 namespace Tesisatci.Controllers
@@ -28,16 +29,24 @@ namespace Tesisatci.Controllers
 
         // POST: api/sales
         [HttpPost]
-        public async Task<ActionResult<Sale>> CreateSale(Sale sale)
+        public async Task<ActionResult<Sale>> CreateSale(SalesCreateDto dto)
         {
-            sale.SaleDate = DateTime.UtcNow;
-
-            var product = await _context.Products.FindAsync(sale.ProductId);
+            var product = await _context.Products.FindAsync(dto.ProductId);
             if (product == null)
                 return BadRequest("Product not found");
 
-            // Stok düş
-            product.Stock -= sale.Quantity;
+            var sale = new Sale
+            {
+                ProductId = dto.ProductId,
+                Quantity = dto.Quantity,
+                CostPrice = dto.CostPrice,
+                SalePrice = dto.SalePrice,
+                SaleDate = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            // stok düş
+            product.Stock -= dto.Quantity;
             if (product.Stock < 0) product.Stock = 0;
 
             _context.Sales.Add(sale);
@@ -45,6 +54,7 @@ namespace Tesisatci.Controllers
 
             return CreatedAtAction(nameof(GetSales), new { id = sale.Id }, sale);
         }
+
 
         // GET: api/sales/top-sold
         [HttpGet("top-sold")]
@@ -89,5 +99,31 @@ namespace Tesisatci.Controllers
 
             return critical;
         }
+
+        // GET: api/sales/summary?months=1
+        [HttpGet("summary")]
+        public async Task<IActionResult> GetSalesSummary([FromQuery] int months = 1)
+        {
+            var fromDate = DateTime.UtcNow.AddMonths(-months);
+
+            var sales = await _context.Sales
+                .Include(s => s.Product)
+                .Where(s => s.SaleDate >= fromDate)
+                .ToListAsync();
+
+            var totalSales = sales.Sum(s => s.Quantity);
+            var totalRevenue = sales.Sum(s => s.SalePrice * s.Quantity);
+            var totalCost = sales.Sum(s => s.CostPrice * s.Quantity);
+            var totalProfit = totalRevenue - totalCost;
+
+            return Ok(new
+            {
+                TotalSales = totalSales,
+                TotalRevenue = totalRevenue,
+                TotalCost = totalCost,
+                TotalProfit = totalProfit
+            });
+        }
+
     }
 }

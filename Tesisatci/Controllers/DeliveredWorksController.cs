@@ -24,8 +24,12 @@ namespace Tesisatci.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DeliveredWork>>> GetDeliveredWorks()
         {
-            return await _context.DeliveredWorks.OrderByDescending(d => d.CreatedAt).ToListAsync();
+            return await _context.DeliveredWorks
+                .Include(d => d.Images)
+                .OrderByDescending(d => d.CreatedAt)
+                .ToListAsync();
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<DeliveredWork>> GetDeliveredWork(int id)

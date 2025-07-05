@@ -7,5 +7,7 @@
         public int DeliveredWorkId { get; set; }
         
         public DeliveredWork DeliveredWork { get; set; }
+        
+
     }
 }
